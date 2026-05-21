@@ -54,5 +54,3 @@ If your repo uses **Rulesets** instead of classic protection:
 - [ ] Dependabot enabled (Security → Dependabot)
 - [ ] Tag `v1.0.0` created from `main` after merge
 - [ ] GitHub Release published with notes from `docs/RELEASE-v1.0.0.md`
-- [ ] Packagist submitted — see [PACKAGIST.md](PACKAGIST.md)
-- [ ] Packagist GitHub hook enabled (auto-update on tag push)

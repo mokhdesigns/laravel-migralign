@@ -13,6 +13,14 @@
   <code>composer require migralign/laravel-migralign</code>
 </p>
 
+<p align="center">
+  <a href="https://github.com/mokhdesigns/laravel-migralign">Repository</a>
+  ·
+  <a href="https://github.com/mokhdesigns/laravel-migralign/issues">Issues</a>
+  ·
+  <a href="SECURITY.md">Security</a>
+</p>
+
 ---
 
 ## Table of contents
@@ -31,8 +39,6 @@
 - [Limitations](#limitations)
 - [Troubleshooting](#troubleshooting)
 - [FAQ](#faq)
-- [Publish to Packagist](#publish-to-packagist)
-- [GitHub deployment guide](#github-deployment-guide)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -62,7 +68,7 @@ It is useful when:
 - PHP 8.2+
 - Laravel 11, 12, or 13
 - MySQL or MariaDB connection
-- PHP 8.3+ required when using Laravel 13
+- Laravel 13 requires PHP 8.3+ (per [Laravel 13 requirements](https://laravel.com/docs/13.x/deployment#server-requirements))
 
 ## Installation
 
@@ -71,6 +77,8 @@ Install the package:
 ```bash
 composer require migralign/laravel-migralign
 ```
+
+Laravel auto-discovers the service provider; no manual registration is required.
 
 Publish config (optional):
 
@@ -152,10 +160,10 @@ php artisan migralign:sync
 ### Options
 
 - `--dry-run`  
-  Show planned changes only, do not apply.
+  Show planned changes only, do not apply. Always exits with status `0`, even when differences are found.
 
 - `--force`  
-  Apply risky changes without interactive prompts.
+  Apply risky/destructive changes without interactive prompts. Also skips pre-check blocking when existing rows would violate the new schema. Use only when you explicitly accept that data risk.
 
 - `--table=users`  
   Limit sync to a specific table.
@@ -178,7 +186,7 @@ php artisan migralign:sync --table=users
 # Preview a subset of migrations
 php artisan migralign:sync --dry-run --migration=2024_01_01
 
-# Apply all including risky (no prompts)
+# Apply all including risky (no prompts; bypasses pre-check blocking)
 php artisan migralign:sync --force
 ```
 
@@ -240,13 +248,15 @@ For changes like `nullable(true)` -> `nullable(false)` or length shrink:
 3. backfill/clean data if needed
 4. run sync and confirm prompts
 
-### Workflow C: CI safety preview
+### Workflow C: Preview in CI or before deploy
 
-Use dry-run in CI/CD to detect unexpected drift:
+Use dry-run locally or in pipelines to **review** planned changes:
 
 ```bash
 php artisan migralign:sync --dry-run
 ```
+
+`--dry-run` always exits successfully (status `0`), even when drift is detected. For CI gates that must fail on drift, parse the command output or add your own wrapper check.
 
 ## Examples
 
@@ -305,7 +315,7 @@ Use `--connection=` with a MySQL connection, or set `migralign.connection`.
 - run with `--dry-run` first
 - follow remediation instructions
 - fix data inconsistencies
-- run again, or use `--force` if you explicitly accept the risk
+- run again after fixing data, or use `--force` only if you explicitly accept bypassing prompts and pre-check blocking
 
 ## FAQ
 
@@ -322,18 +332,11 @@ No. `migrate` applies migration history; MigrAlign aligns current schema intent 
 
 Yes, but always run dry-run first and review destructive/risky operations.
 
- 
 ## Contributing
 
-Contributions are welcome.
+Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, test commands, and pull request guidelines.
 
-Suggested process:
-
-1. fork
-2. create feature branch
-3. add/adjust tests
-4. run `composer test`
-5. submit PR
+Report security issues privately — see [SECURITY.md](SECURITY.md).
 
 ## License
 
