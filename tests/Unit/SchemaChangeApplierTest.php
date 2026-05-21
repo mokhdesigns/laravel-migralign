@@ -70,4 +70,32 @@ class SchemaChangeApplierTest extends TestCase
         $this->assertStringContainsString('CREATE TABLE `posts`', $sql);
         $this->assertStringContainsString('`title`', $sql);
     }
+
+    #[Test]
+    public function it_generates_valid_auto_increment_primary_key_for_create_table(): void
+    {
+        $applier = new SchemaChangeApplier($this->app['db']->connection());
+
+        $change = new SchemaChange(
+            operation: ChangeOperation::CreateTable,
+            table: 'patients',
+            risk: RiskLevel::Safe,
+            tableColumns: [
+                'id' => new ColumnDefinition(
+                    name: 'id',
+                    type: 'bigInteger',
+                    nullable: false,
+                    unsigned: true,
+                    autoIncrement: true,
+                ),
+                'created_at' => new ColumnDefinition('created_at', 'timestamp', nullable: true),
+                'updated_at' => new ColumnDefinition('updated_at', 'timestamp', nullable: true),
+            ],
+        );
+
+        $sql = $applier->toSql($change);
+
+        $this->assertStringContainsString('`id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY', $sql);
+        $this->assertStringNotContainsString('`id` BIGINT UNSIGNED NULL', $sql);
+    }
 }

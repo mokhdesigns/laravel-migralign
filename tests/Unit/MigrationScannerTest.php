@@ -31,4 +31,19 @@ class MigrationScannerTest extends TestCase
 
         $this->assertNotNull($intent->getTable('users'));
     }
+
+    #[Test]
+    public function it_treats_id_column_as_not_nullable(): void
+    {
+        $scanner = new MigrationScanner(new Filesystem);
+
+        $intent = $scanner->scan(__DIR__.'/../fixtures/migrations', 'create_patients', ['migrations'], $this->app['db']->connection('testing'));
+
+        $id = $intent->getTable('patients')?->getColumn('id');
+
+        $this->assertNotNull($id);
+        $this->assertFalse($id->nullable);
+        $this->assertTrue($id->autoIncrement);
+        $this->assertTrue($id->unsigned);
+    }
 }

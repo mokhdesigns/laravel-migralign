@@ -86,12 +86,12 @@ class SyncMigrationsCommand extends Command
 
         $this->info('Applying changes...');
 
+        // MySQL DDL (CREATE/ALTER/DROP) implicitly commits; a single wrapping transaction
+        // fails with "There is no active transaction" after the first DDL statement.
         try {
-            $connection->transaction(function () use ($changes, $applier, $guide, $introspector, $report, $autoApplySafe, $force) {
-                foreach ($changes as $change) {
-                    $this->processChange($change, $applier, $guide, $introspector, $report, $autoApplySafe, $force);
-                }
-            });
+            foreach ($changes as $change) {
+                $this->processChange($change, $applier, $guide, $introspector, $report, $autoApplySafe, $force);
+            }
         } catch (\RuntimeException $e) {
             if ($e->getMessage() === 'Sync aborted by user.') {
                 $this->warn($e->getMessage());

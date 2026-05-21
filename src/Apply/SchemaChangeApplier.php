@@ -135,7 +135,9 @@ class SchemaChangeApplier
             $this->formatColumnType($column),
         ];
 
-        if (! $column->nullable) {
+        $nullable = $column->nullable && ! $column->autoIncrement;
+
+        if (! $nullable) {
             $parts[] = 'NOT NULL';
         } else {
             $parts[] = 'NULL';
@@ -144,12 +146,12 @@ class SchemaChangeApplier
         if ($column->default !== null) {
             $default = $this->formatDefault($column->default);
             $parts[] = "DEFAULT {$default}";
-        } elseif ($column->nullable) {
+        } elseif ($nullable) {
             $parts[] = 'DEFAULT NULL';
         }
 
         if ($column->autoIncrement) {
-            $parts[] = 'AUTO_INCREMENT';
+            $parts[] = 'AUTO_INCREMENT PRIMARY KEY';
         }
 
         return implode(' ', $parts);

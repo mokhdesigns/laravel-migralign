@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/migralign-social-cover.png" alt="MigrAlign" width="320">
+  <img src="assets/migralign-social-cover.png" alt="MigrAlign">
 </p>
 
 <h1 align="center">MigrAlign</h1>

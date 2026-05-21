@@ -44,7 +44,6 @@ class InteractiveGuide
             }
         }
 
-        $helper = $output->getHelper('question');
         $question = new ChoiceQuestion(
             'How do you want to proceed?',
             [
@@ -55,7 +54,7 @@ class InteractiveGuide
             'skip'
         );
 
-        $answer = $helper->ask($output, $question);
+        $answer = $output->askQuestion($question);
 
         if ($answer === 'abort') {
             throw new \RuntimeException('Sync aborted by user.');

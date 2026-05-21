@@ -94,16 +94,25 @@ class ColumnDefinition
     {
         $name = $name !== '' ? $name : (string) ($attributes['name'] ?? '');
 
+        $autoIncrement = (bool) ($attributes['autoIncrement'] ?? false);
+        $nullable = array_key_exists('nullable', $attributes)
+            ? (bool) $attributes['nullable']
+            : false;
+
+        if ($autoIncrement) {
+            $nullable = false;
+        }
+
         return new self(
             name: $name,
             type: (string) ($attributes['type'] ?? 'string'),
             length: isset($attributes['length']) ? (int) $attributes['length'] : null,
             precision: isset($attributes['precision']) ? (int) $attributes['precision'] : null,
             scale: isset($attributes['scale']) ? (int) $attributes['scale'] : null,
-            nullable: (bool) ($attributes['nullable'] ?? true),
+            nullable: $nullable,
             default: $attributes['default'] ?? null,
             unsigned: (bool) ($attributes['unsigned'] ?? false),
-            autoIncrement: (bool) ($attributes['autoIncrement'] ?? false),
+            autoIncrement: $autoIncrement,
             comment: $attributes['comment'] ?? null,
             enumValues: $attributes['allowed'] ?? null,
         );
